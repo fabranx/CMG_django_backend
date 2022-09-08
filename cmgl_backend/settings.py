@@ -27,12 +27,32 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', default=True)
 
-ALLOWED_HOSTS = []
+#ALLOWED_HOSTS = [] # development
+ALLOWED_HOSTS = ['.herokuapp.com', 'localhost', '127.0.0.1', '.netlify.app']  # production
+
+ENVIRONMENT = os.environ.get('ENVIRONMENT', default='development') # new
+
+if ENVIRONMENT == 'production':
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'DENY'
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    CSRF_COOKIE_SAMESITE = None
+    SESSION_COOKIE_SAMESITE = None
+    DEBUG = False
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
+import cloudinary
+import cloudinary_storage
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -40,6 +60,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'whitenoise.runserver_nostatic', # 
     'django.contrib.staticfiles',
     'django.contrib.sites', # per allauth
 
@@ -63,12 +84,17 @@ INSTALLED_APPS = [
     'games.apps.GamesConfig',
     'music.apps.MusicConfig',
 
+    # media cloudinary
+    'cloudinary',
+    'cloudinary_storage'
+
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', #
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -83,9 +109,11 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:8080',
     'http://0.0.0.0:3000',
     'http://0.0.0.0:8080',
+    'https://legendary-klepon-41e8c0.netlify.app',
 )
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
+    'https://legendary-klepon-41e8c0.netlify.app'
 ]
 
 CORS_ALLOW_CREDENTIALS = True  # per invio token tramite cookie httponly
@@ -164,6 +192,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
+# Cloudinary stuff
+if ENVIRONMENT == 'production':
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': os.getenv('CLOUD_NAME'),
+        'API_KEY': os.getenv('API_KEY'),
+        'API_SECRET': os.getenv('API_SECRET')
+    }
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -200,6 +238,7 @@ JWT_AUTH_COOKIE = 'my-app-auth'
 JWT_AUTH_REFRESH_COOKIE = 'my-refresh-token'
 JWT_AUTH_SECURE = True
 JWT_AUTH_HTTPONLY = True
+JWT_AUTH_SAMESITE = None
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
@@ -218,10 +257,9 @@ SIMPLE_JWT = {
 
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # new
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # per allauth
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
 
-# DEFAULT_FROM_EMAIL = 'admin@cmglblog.it'
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 
 
@@ -233,10 +271,10 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend'
 )
 
-ACCOUNT_USERNAME_REQUIRED = False # new
-ACCOUNT_AUTHENTICATION_METHOD = 'email' # new
-ACCOUNT_EMAIL_REQUIRED = True # new
-ACCOUNT_UNIQUE_EMAIL = True # new
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True 
+ACCOUNT_UNIQUE_EMAIL = True 
 
 
 #SENDGRID EMAIL CONF
@@ -251,3 +289,9 @@ TMDB_API_KEY = os.getenv('TMDB_API_KEY')
 
 IGDB_CLIENT_ID = os.getenv('IGDB_CLIENT_ID')
 IGDB_AUTH_TOKEN = os.getenv('IGDB_AUTH_TOKEN')
+
+
+# Heroku
+import dj_database_url
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)

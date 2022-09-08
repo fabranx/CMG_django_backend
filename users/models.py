@@ -5,7 +5,8 @@ from django.contrib.auth.models import AbstractUser
 
 
 class CustomUser(AbstractUser):
-    image = models.ImageField(default='default.jpg', upload_to='profile_pics', blank=True)
+    # image = models.ImageField(default='default.jpg', upload_to='profile_pics', blank=True)
+    image = models.ImageField(upload_to='profile_pics', blank=True)
 
 
 # class Profile(models.Model):

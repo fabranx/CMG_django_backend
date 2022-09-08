@@ -19,6 +19,11 @@ django-filter = "*"
 tmdbsimple = "*"
 igdb-api-v4 = "*"
 spotipy = "*"
+whitenoise = "*"
+gunicorn = "*"
+dj-database-url = "*"
+cloudinary = "*"
+django-cloudinary-storage = "*"
 
 [dev-packages]
 
