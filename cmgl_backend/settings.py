@@ -152,7 +152,8 @@ DATABASES = {
         'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': 'fabranx.mysql.pythonanywhere-services.com',
         'OPTIONS': {
-            'init_command': 'SET default_storage_engine=INNODB',
+            'init_command': "SET default_storage_engine=INNODB; \
+                              SET sql_mode='STRICT_TRANS_TABLES'",
         }
     }
 }
