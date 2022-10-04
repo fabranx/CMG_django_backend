@@ -109,11 +109,11 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:8080',
     'http://0.0.0.0:3000',
     'http://0.0.0.0:8080',
-    'https://legendary-klepon-41e8c0.netlify.app',
+    'https://cmgblog.netlify.app/',
 )
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
-    'https://legendary-klepon-41e8c0.netlify.app'
+    'https://cmgblog.netlify.app/'
 ]
 
 CORS_ALLOW_CREDENTIALS = True  # per invio token tramite cookie httponly
