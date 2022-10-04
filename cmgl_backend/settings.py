@@ -30,7 +30,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG', default=True)
 
 #ALLOWED_HOSTS = [] # development
-ALLOWED_HOSTS = ['.herokuapp.com', 'localhost', '127.0.0.1', '.netlify.app']  # production
+ALLOWED_HOSTS = ['.pythonanywhere.com', 'localhost', '127.0.0.1', '.netlify.app']  # production
 
 ENVIRONMENT = os.environ.get('ENVIRONMENT', default='development') # new
 
@@ -146,12 +146,14 @@ WSGI_APPLICATION = 'cmgl_backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': 'db',
-        'PORT': 5432,
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'fabranx$db',
+        'USER': 'fabranx',
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': 'fabranx.mysql.pythonanywhere-services.com',
+        'OPTIONS': {
+            'init_command': 'SET default_storage_engine=INNODB',
+        }
     }
 }
 
@@ -289,9 +291,3 @@ TMDB_API_KEY = os.getenv('TMDB_API_KEY')
 
 IGDB_CLIENT_ID = os.getenv('IGDB_CLIENT_ID')
 IGDB_AUTH_TOKEN = os.getenv('IGDB_AUTH_TOKEN')
-
-
-# Heroku
-import dj_database_url
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
