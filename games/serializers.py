@@ -7,10 +7,12 @@ class GameReviewSerializer(serializers.ModelSerializer):
         return obj.author.username  # sostituisce id author con l'username
     
     profile_image = serializers.SerializerMethodField()
-    def get_profile_image(self, obj):
-        url = obj.author.image.url
-        request = self.context['request']
-        return request.build_absolute_uri(url)
+        try:
+            url = obj.author.image.url
+            request = self.context['request']
+            return request.build_absolute_uri(url)
+        except ValueError:
+            return None
     
     class Meta:
         model = GameReview
