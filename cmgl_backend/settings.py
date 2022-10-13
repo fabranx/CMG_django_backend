@@ -49,17 +49,13 @@ if ENVIRONMENT == 'production':
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
-# Application definition
-import cloudinary
-import cloudinary_storage
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'whitenoise.runserver_nostatic', # 
+    'whitenoise.runserver_nostatic', #
     'django.contrib.staticfiles',
     'django.contrib.sites', # per allauth
 
@@ -195,13 +191,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 # Cloudinary stuff
-if ENVIRONMENT == 'production':
-    CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': os.getenv('CLOUD_NAME'),
-        'API_KEY': os.getenv('API_KEY'),
-        'API_SECRET': os.getenv('API_SECRET')
-    }
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# use CLOUDINARY_STORAGE or environment variable CLOUDINARY_URL=cloudinary://API_KEY:API_SECRET@cloud_name?api_proxy=http://x.x.x.x:8080
+ #   CLOUDINARY_STORAGE = {
+ #       'CLOUD_NAME': os.getenv('CLOUD_NAME'),
+ #       'API_KEY': os.getenv('API_KEY'),
+ #       'API_SECRET': os.getenv('API_SECRET'),
+ #   }
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 
 
 STATIC_URL = 'static/'
@@ -231,7 +228,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-REST_AUTH_PW_RESET_USE_SITES_DOMAIN  = True  # link per ripristino password via email ha come indirizzo il dominio inserito in admin/sites/ domain name 
+REST_AUTH_PW_RESET_USE_SITES_DOMAIN  = True  # link per ripristino password via email ha come indirizzo il dominio inserito in admin/sites/ domain name
 OLD_PASSWORD_FIELD_ENABLED = True
 LOGOUT_ON_PASSWORD_CHANGE = True
 REST_USE_JWT = True
@@ -260,7 +257,7 @@ SIMPLE_JWT = {
 
 
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # SENDGRID API EMAIL
 EMAIL_BACKEND = 'sendgrid_backend.SendgridBackend'
@@ -270,7 +267,7 @@ SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 
 # allauth config
-SITE_ID = 1 
+SITE_ID = 1
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -279,8 +276,8 @@ AUTHENTICATION_BACKENDS = (
 
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_REQUIRED = True 
-ACCOUNT_UNIQUE_EMAIL = True 
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
 
 
 #SENDGRID SMTP EMAIL CONF
