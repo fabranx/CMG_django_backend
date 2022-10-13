@@ -23,7 +23,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-46g-f_@z52%)(63k$efgz)3&v)-gbz0b)bfs70=jf54nz73=3d'
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -260,11 +259,15 @@ SIMPLE_JWT = {
 
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
 
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+# SENDGRID API EMAIL
+EMAIL_BACKEND = 'sendgrid_backend.SendgridBackend'
 
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
+
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 
 # allauth config
 SITE_ID = 1 
@@ -280,12 +283,12 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True 
 
 
-#SENDGRID EMAIL CONF
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_API_KEY')
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+#SENDGRID SMTP EMAIL CONF
+# EMAIL_HOST = 'smtp.sendgrid.net'
+# EMAIL_HOST_USER = 'apikey'
+# EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_API_KEY')
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
 
 
 TMDB_API_KEY = os.getenv('TMDB_API_KEY')
