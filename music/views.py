@@ -78,27 +78,31 @@ def music_genres():
 
 
 class SpotifyLatestAlbumsApiView(APIView):
-	'''API RITORNA UNA LISTA DI ALBUM USCITI DI RECENTE
+	'''API CHE RITORNA UNA LISTA DI ALBUM USCITI DI RECENTE
 	   E UNA LISTA DI ALBUM PER OGNI GENERE'''
 	permission_classes = (permissions.AllowAny,)
 
 	def post(self, request):
 		response = {}
-		# new_release = sp.new_releases(country='IT', limit=20)
-		# response['new_release'] = new_release['albums']['items']
-		if 'generi' in request.data.keys():
-			lista_generi = music_genres()
-			for genere in request.data['generi']:
-				if genere in lista_generi:
-					recommendations = sp.recommendations(seed_genres=[genere], limit=15, country='IT')
-					if 'tracks' in recommendations.keys():
-						response[genere] = []
-						for track in recommendations['tracks']:
-							if 'album' in track.keys():
-								# if track['album']['album_type'].upper() != 'SINGLE':
-								response[genere].append(track['album'])
-			
-		return Response(response, status=status.HTTP_200_OK)
+		new_release = sp.new_releases(country='IT', limit=20)
+		response['new_release'] = new_release['albums']['items']
+
+		try:
+			if 'generi' in request.data.keys():
+				lista_generi = music_genres()
+				for genere in request.data['generi']:
+					if genere in lista_generi:
+						recommendations = sp.recommendations(seed_genres=[genere], limit=15, country='IT')
+						if 'tracks' in recommendations.keys():
+							response[genere] = []
+							for track in recommendations['tracks']:
+								if 'album' in track.keys():
+									# if track['album']['album_type'].upper() != 'SINGLE':
+									response[genere].append(track['album'])
+
+			return Response(response, status=status.HTTP_200_OK)
+		except spotipy.client.SpotifyException as e:
+			return Response(f"{'error': {e} }", status=status.HTTP_400_BAD_REQUEST)
 
 
 class SpotifyAlbumDetailAPIView(APIView):
@@ -144,9 +148,6 @@ class SpotifySearchAlbumsApiView(APIView):
 	permission_classes = (permissions.AllowAny,)
 
 	def post(self, request):
-		response = {}
-		# new_release = sp.new_releases(country='IT', limit=20)
-		# response['new_release'] = new_release['albums']['items']
 		if 'query' and 'type' in request.data.keys():
 			try:
 				# ES. album_search =  sp.search(q='album:Drones', type='album')
