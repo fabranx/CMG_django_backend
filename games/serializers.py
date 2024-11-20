@@ -7,6 +7,8 @@ class GameReviewSerializer(serializers.ModelSerializer):
         return obj.author.username  # sostituisce id author con l'username
     
     profile_image = serializers.SerializerMethodField()
+    
+    def get_profile_image(self, obj):
         try:
             url = obj.author.image.url
             request = self.context['request']
